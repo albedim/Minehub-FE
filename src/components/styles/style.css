@@ -1,0 +1,61 @@
+
+
+@media screen and (max-width: 1280px) {
+  .bodyhome{
+    display: block !important;
+  }
+  .mobile-w-screen{
+    width: 100vw;
+  }
+  .flex-block{
+    display: block !important;
+  }
+  .block-flex{
+    display: flex !important;
+  }
+  .block-none{
+    display: none !important;
+  }
+  .flex-none{
+    display: none !important;
+  }
+  .none-flex{
+    display: flex !important;
+  }
+  .none-block{
+    display: block !important;
+  }
+}
+
+.flex-block{
+  display: flex;
+}
+
+.block-flex{
+  display: block;
+}
+
+.block-none{
+  display: block;
+}
+
+.none-block{
+  display: none;
+}
+
+.flex-none{
+  display: flex;
+}
+
+.none-flex{
+  display: none;
+}
+
+::-webkit-scrollbar{
+  width: 4px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb{
+  background-color: white;
+}
