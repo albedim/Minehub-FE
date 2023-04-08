@@ -19,7 +19,7 @@ export const Hero = () => {
     .then(response => {
       setServerStats(response.data)
     })
-    .catch(error => console.log(error))
+    .catch(error => {})
   }
 
   useEffect(() => {getServerStats()}, [])

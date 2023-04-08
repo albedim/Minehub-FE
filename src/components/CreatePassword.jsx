@@ -44,7 +44,7 @@ export const CreatePassword = () => {
       setPopupStatus(true)
       setTimeout(() => { navigate("/signin") }, 1000);
     })
-    .catch(error => console.log(error))
+    .catch(error => {})
   }
 
   return(

@@ -36,7 +36,8 @@ export const Home = () => {
     "questions":0, 
     "role_id":"",
     "role": {},
-    "user_id":0
+    "user_id":0,
+    "image": ""
   })
 
   const [isLoading, setIsLoading] = useState(true);
@@ -63,19 +64,19 @@ export const Home = () => {
   const getStaffers = async () => {
     await axios.get(BASE_URL + '/user/get/staffers')
       .then(response => { setStaffers(response.data); getRecentUsers() })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   const getRecentUsers = () => {
     axios.get(BASE_URL + '/user/get/recent')
       .then(response => { setRecentUsers(response.data); getServerStats() })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   const getRoles = async () => {
     await axios.get(BASE_URL + '/role/get')
       .then(response => { setRoles(response.data) })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   useEffect(() => {
@@ -92,7 +93,7 @@ export const Home = () => {
     if(token == null){
       setIsLoggedIn(false)
     }else{
-      axios.get(BASE_URL + '/user/session_check?jwt=' + window.localStorage.getItem("token"))
+      axios.get(BASE_URL + '/user/session_check', { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
       .then(response => {
         setIsLoggedIn(true)
       })
@@ -108,7 +109,7 @@ export const Home = () => {
         setServerStats(response.data)
         getNewses()
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   const getNewses = () => {
@@ -117,7 +118,7 @@ export const Home = () => {
         setNewses(response.data)
         setIsLoading(false)
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   const addNews = () => {
@@ -132,7 +133,7 @@ export const Home = () => {
         setModalStatus(false)
         setIsCreatingLoading(false)
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   const setBanned = (userId, banned) => {
@@ -143,7 +144,7 @@ export const Home = () => {
       .then(response => {
         setProfileModalStatus(false)
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   return (
@@ -164,12 +165,7 @@ export const Home = () => {
                   <div>
                     <div className='justify-around flex'>
                       <div style={{ width: 94 }}>
-                        <Avatar
-                          size={40}
-                          name={profile.minecraft_username}
-                          variant="beam"
-                          colors={[COLORS[1], COLORS[2], COLORS[0], COLORS[3], COLORS[4]]}
-                        />
+                        <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + profile.image.substring(2,profile.image.length - 1)}/>
                       </div>
                     </div>
                     <div className=' mt-4 text-xl items-center justify-around flex' style={{ borderRadius: 5, backgroundColor: profile.role.color }}><h2 style={{ fontSize: 14, fontWeight: 600, fontFamily: 'League Spartan' }} className='text-[#ffffff]'>{profile.role.role_label}</h2></div>
@@ -298,7 +294,7 @@ export const Home = () => {
                 </div>
                 {
                   newses.map(iterationNews => (
-                    <div style={{ maxWidth: 1040 }} className='pl-8 mt-10 pr-14'>
+                    <div key={iterationNews.news_id} style={{ maxWidth: 1040 }} className='pl-8 mt-10 pr-14'>
                       <div style={{ borderRadius: 8, fontFamily: 'League Spartan', height: 64 }} className='pl-10 pr-10 font-bold flex items-center text-[#ffffff] bg-[#2a313b]'>
                         <div>
                           <h2>{iterationNews.title}</h2>
@@ -309,12 +305,7 @@ export const Home = () => {
                         <div style={{cursor: 'pointer'}} onClick={(e) => {setProfile(iterationNews.owner); setProfileModalStatus(true)}}>
                           <div className='justify-around flex'>
                             <div style={{ width: 114 }}>
-                              <Avatar
-                                size={40}
-                                name={iterationNews.owner.minecraft_username}
-                                variant="beam"
-                                colors={[COLORS[1], COLORS[2], COLORS[0], COLORS[3], COLORS[4]]}
-                              />
+                              <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + iterationNews.owner.image.substring(2,iterationNews.owner.image.length - 1)}/>
                             </div>
                           </div>
                           <div className='justify-around items-center flex'><h2 style={{ fontFamily: 'League Spartan' }} className='mt-4 text-xl text-[#ffffff]'>{iterationNews.owner.minecraft_username}</h2></div>
@@ -338,14 +329,9 @@ export const Home = () => {
                     <div>
                       {
                         staffers.map(staffer => (
-                          <div onClick={(e) => {setProfile(staffer); setProfileModalStatus(true)}} style={{cursor: 'pointer', borderTopColor: '#384554', borderTopWidth: 1, height: 74 }} className='items-center flex'>
+                          <div key={staffer.user_id} onClick={(e) => {setProfile(staffer); setProfileModalStatus(true)}} style={{cursor: 'pointer', borderTopColor: '#384554', borderTopWidth: 1, height: 74 }} className='items-center flex'>
                             <div className='ml-4' style={{ width: 38 }}>
-                              <Avatar
-                                size={40}
-                                name={staffer.minecraft_username}
-                                variant="beam"
-                                colors={[COLORS[1], COLORS[2], COLORS[0], COLORS[3], COLORS[4]]}
-                              />
+                              <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + staffer.image.substring(2,staffer.image.length - 1)}/>
                             </div>
                             <div className='ml-4'>
                               <h2 style={{ fontFamily: 'League Spartan' }} className='text-sm text-[#ffffff]'>@{staffer.minecraft_username}</h2>
@@ -362,16 +348,11 @@ export const Home = () => {
                     </div>
                     <div>
                       {
-                        recentUsers.map((recentUser, iteration) => (
-                          <div onClick={(e) => {setProfile(recentUser); setProfileModalStatus(true)}} style={{ cursor: 'pointer', borderTopColor: '#384554', borderTopWidth: 1, height: 74 }} className='justify-between items-center flex'>
+                        recentUsers.map((recentUser) => (
+                          <div key={recentUser.user_id} onClick={(e) => {setProfile(recentUser); setProfileModalStatus(true)}} style={{ cursor: 'pointer', borderTopColor: '#384554', borderTopWidth: 1, height: 74 }} className='justify-between items-center flex'>
                             <div className='flex'>
                               <div className='ml-4' style={{ width: 38 }}>
-                                <Avatar
-                                  size={40}
-                                  name={recentUser.minecraft_username}
-                                  variant="beam"
-                                  colors={[COLORS[1], COLORS[2], COLORS[0], COLORS[3], COLORS[4]]}
-                                />
+                                <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + recentUser.image.substring(2,recentUser.image.length - 1)}/>
                               </div>
                               <div className='ml-4'>
                                 <h2 style={{ fontFamily: 'League Spartan' }} className='text-sm text-[#ffffff]'>@{recentUser.minecraft_username}</h2>

@@ -37,7 +37,7 @@ export const Admin = () => {
       .then(response => {
         setIsLoggedId(true)
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   const handleUserAdmin = (e) => {
@@ -74,7 +74,7 @@ export const Admin = () => {
       .then(response => {
         setMaintenance(response.data.param)
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   const getRoles = async () => {
@@ -82,7 +82,7 @@ export const Admin = () => {
       .then(response => {
         setRoles(response.data)
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   const setServerMaintenance = async (status) => {
@@ -91,7 +91,7 @@ export const Admin = () => {
         .then(response => {
           getMaintenance()
         })
-        .catch(error => console.log(error))
+        .catch(error => {})
     }
   }
 
@@ -111,7 +111,7 @@ export const Admin = () => {
                 <select style={{color: 'gray'}} className="ml-4 p-2 bg-[#242a33]" name="role_id" onChange={(e) => handleUserData(e)} id="">
                   {
                     roles.map(role => (
-                      <option value={role.role_id}>{role.role_label}</option>
+                      <option key={role.role_id} value={role.role_id}>{role.role_label}</option>
                     ))
                   }
                 </select>

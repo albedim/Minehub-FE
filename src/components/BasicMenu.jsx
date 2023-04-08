@@ -34,11 +34,11 @@ export default function BasicMenu({ questionId }) {
   };
 
   const getQuestion = async () => {
-    await axios.get(BASE_URL + "/question/get/" + questionId + "?jwt=" + window.localStorage.getItem("token"))
+    await axios.get(BASE_URL + "/question/get/" + questionId, { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
       .then(response => {
         setQuestion(response.data)
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   React.useEffect(() => {
@@ -46,14 +46,14 @@ export default function BasicMenu({ questionId }) {
   },[])
 
   const changeStatus = async (status) => {
-    await axios.put(BASE_URL + "/question/change/status?jwt=" + window.localStorage.getItem("token"), {
+    await axios.put(BASE_URL + "/question/change/status", {
       'question_id': questionId,
       'status': status
-    })
+    }, { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
     .then(response => {
       getQuestion()
     })
-    .catch(error => console.log(error))
+    .catch(error => {})
   }
 
   const statusColor = (status) => {

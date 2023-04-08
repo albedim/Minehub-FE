@@ -7,11 +7,12 @@ import { COLORS } from "../config";
 
 export const Signup = () => {
 
-  const [user,setUser] = useState({
+  const [user, setUser] = useState({
     'email': '',
     'name': '',
     'minecraft_username': '',
-    'password': ''
+    'password': '',
+    'image': null
   })
 
   const navigate = useNavigate()
@@ -42,13 +43,26 @@ export const Signup = () => {
        setPopupStatus(true)
     })
   }
+
+  const handleImage = (e) => {
+    const newUser = { ...user }
+    let reader = new FileReader();
+    reader.readAsDataURL(e.target.files[0]);
+    reader.onload = function () {
+      newUser['image'] = reader.result.substring(22)
+      setUser(newUser)
+    };
+    reader.onerror = function (error) {
+        console.log('Error: ', error);
+    };
+  }
   
 
   return(
     <div className="items-center justify-around flex bg-[#242a33] h-screen w-screen">
       <div style={{width: 340, height: 534}} className="bg-[#2a313b]">
         <div className="items-center justify-around flex p-8">
-          <h2 style={{fontFamily: 'League Spartan'}} className="font-bold text-2xl text-[#ffffff]">Accedi</h2>
+          <h2 style={{fontFamily: 'League Spartan'}} className="font-bold text-2xl text-[#ffffff]">Registrati</h2>
         </div>
         <div className="items-center justify-around flex">
           <div>
@@ -67,6 +81,10 @@ export const Signup = () => {
             <div className="mt-4">
               <h2 className="text-[#ffffff]" style={{fontFamily: 'League Spartan'}}>Password [a-A/0-9]</h2>
               <input name="password" value={user.password} onChange={(e) => handleUser(e)} style={{borderRadius: 5}} className="p-1 bg-[#596270]" type="password" />
+            </div>
+            <div className="mt-4">
+              <h2 className="text-[#ffffff]" style={{fontFamily: 'League Spartan'}}>Avatar (Opzionale)</h2>
+              <input onChange={(e) => handleImage(e)} style={{width: 192, borderRadius: 5}} className="p-1 bg-[#596270]" type="file" />
             </div>
           </div>
         </div>

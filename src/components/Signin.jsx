@@ -25,7 +25,8 @@ export const Signin = () => {
   const signin = async () => {
     await axios.post(BASE_URL + '/user/signin', user)
     .then(response => {
-      window.localStorage.setItem("token", response.data.param)
+      window.localStorage.setItem("token", response.data.param.token)
+      window.localStorage.setItem("profile_image", response.data.param.image)
       navigate("/")
     })
     .catch(error => setPopupStatus(true))

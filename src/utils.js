@@ -1,6 +1,8 @@
-//export const BASE_URL = 'http://135.125.4.16:5000/api/v_1_8_0'
+import { BACKEND_URL } from "./config"
+
 //export const BASE_URL = 'https://fightclubmc.pythonanywhere.com/api/v_1_6_5'
-export const BASE_URL = 'http://127.0.0.1:5000/api/v_1_9_0'
+//export const BASE_URL = 'http://135.125.4.16:5000/api/v_1_8_0'
+export const BASE_URL = BACKEND_URL
 
 
 

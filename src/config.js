@@ -4,3 +4,4 @@ export const COLORS = ["#d880d9", "#9c2b88", "#9d2b88","#d164bd", "#d173bf"] // 
 export const DISCORD = "https://discord.example.com" // Cambia il link discord
 export const INSTAGRAM = "https://instagram.com/example" // Cambia il link instagram
 export const SERVER_IP = "fightclubmc.net" // Cambia l'ip del server
+export const BACKEND_URL = 'http://{INDIRIZZO_DEL_BACKEND}/api/v_1_9_5' // Cambia l'indirizzo del backend

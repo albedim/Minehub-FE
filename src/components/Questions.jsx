@@ -29,9 +29,9 @@ export const Questions = () => {
   const [category, setCategory] = useState({})
 
   const getQuestions = async () => {
-    await axios.get(BASE_URL + '/question/get/' + categoryId + "/category?jwt=" + window.localStorage.getItem("token"))
+    await axios.get(BASE_URL + '/question/get/' + categoryId + "/category", { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
       .then(response => { setCategory(response.data.category); setQuestions(response.data.questions); setTimeout(() => { setIsLoading(false) }, 1000); })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export const Questions = () => {
     .then(response => {
       addMessage(response.data.param)
     })
-    .catch(error => console.log(error))
+    .catch(error => {})
   }
 
   const addMessage = async (questionId) => {
@@ -59,7 +59,7 @@ export const Questions = () => {
       'body': question.body
     })
     .then(response => getQuestions())
-    .catch(error => console.log(error))
+    .catch(error => {})
   }
 
   const handleQuestion = (e) => {
@@ -77,7 +77,7 @@ export const Questions = () => {
     if(token == null){
       navigate("/signin")
     }else{
-      axios.get(BASE_URL + '/user/session_check?jwt=' + window.localStorage.getItem("token"))
+      axios.get(BASE_URL + '/user/session_check', { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
       .then(response => {
         return
       })
@@ -154,16 +154,11 @@ export const Questions = () => {
                   <div style={{overflowY: 'scroll', maxHeight: 750}} className='mt-4 p-10 bg-[#2a313b]'>
                     {
                       questions.map(question => (
-                        <div onClick={(e) => navigate("/question/" + question.question_id)} style={{ cursor: 'pointer', borderBottomWidth: 1, borderBottomColor: '#384554', height: 94 }} className="justify-between items-center flex">
+                        <div key={question.question_id} onClick={(e) => navigate("/question/" + question.question_id)} style={{ cursor: 'pointer', borderBottomWidth: 1, borderBottomColor: '#384554', height: 94 }} className="justify-between items-center flex">
                           <div className="pr-4 pl-4 flex">
-                            <div className='justify-around flex'>
+                            <div className='items-center justify-around flex'>
                               <div style={{ width: 34 }}>
-                                <Avatar
-                                  size={40}
-                                  name={question.owner.minecraft_username}
-                                  variant="beam"
-                                  colors={[COLORS[1], COLORS[2], COLORS[0], COLORS[3], COLORS[4]]}
-                                />
+                                <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + question.owner.image.substring(2,question.owner.image.length - 1)}/>
                               </div>
                             </div>
                             <div>

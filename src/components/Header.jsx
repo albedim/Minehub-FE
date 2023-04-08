@@ -44,14 +44,14 @@ export const Header = () => {
   useEffect(() => {
     getIsLoggedIn()
     getRoles()
-  })
+  },[])
 
   const getIsLoggedIn = () => {
     const token = window.localStorage.getItem("token")
     if(token == null){
       setIsLoggedIn(false)
     }else{
-      axios.get(BASE_URL + '/user/session_check?jwt=' + window.localStorage.getItem("token"))
+      axios.get(BASE_URL + '/user/session_check', { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")} })
       .then(response => {
         setIsLoggedIn(true)
       })
@@ -79,15 +79,15 @@ export const Header = () => {
       setProfileModalStatus(false)
       setProfileToEditModalStatus(false)
     })
-    .catch(error => console.log(error))
+    .catch(error => {})
   }
 
   const getRoles = async () => {
-    await axios.put(BASE_URL + "/role/get")
+    await axios.get(BASE_URL + "/role/get")
     .then((response) => {
       setRoles(response.data)
     })
-    .catch(error => console.log(error))
+    .catch(error => {})
   }
 
   return (
@@ -103,12 +103,7 @@ export const Header = () => {
             <div>
               <div className='justify-around flex'>
                 <div style={{ width: 94 }}>
-                  <Avatar
-                    size={40}
-                    name={profile.minecraft_username}
-                    variant="beam"
-                    colors={[COLORS[1], COLORS[2], COLORS[0], COLORS[3], COLORS[4]]}
-                  />
+                  <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + window.localStorage.getItem("profile_image").substring(2,window.localStorage.getItem("profile_image").length - 1)}/>
                 </div>
               </div>
               <div className=' mt-4 text-xl items-center justify-around flex' style={{ borderRadius: 5, backgroundColor: profile.role.color }}><h2 style={{ fontSize: 14, fontWeight: 600, fontFamily: 'League Spartan' }} className='text-[#ffffff]'>{profile.role.role_label}</h2></div>
@@ -184,12 +179,7 @@ export const Header = () => {
               <div className="flex">
                 <div onClick={(e) => {setProfile(jwt(window.localStorage.getItem("token")).sub); setProfileToEdit({'name': jwt(window.localStorage.getItem("token")).sub.name, "minecraft_username": jwt(window.localStorage.getItem("token")).sub.minecraft_username, "email": jwt(window.localStorage.getItem("token")).sub.email}); setProfileModalStatus(true)}} style={{cursor: 'pointer', width: 54 }} className="items-center flex">
                   <div style={{ width: 24 }}>
-                    <Avatar
-                      size={40}
-                      name={jwt(window.localStorage.getItem("token")).sub.minecraft_username}
-                      variant="beam"
-                      colors={[COLORS[1], COLORS[2], COLORS[0], COLORS[3], COLORS[4]]}
-                    />
+                    <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + window.localStorage.getItem("profile_image").substring(2,window.localStorage.getItem("profile_image").length - 1)}/>
                   </div>
                 </div>
                 <div style={{ cursor: 'pointer', width: 124 }} onClick={(e) => { window.localStorage.removeItem("token"); navigate("/signin") }} className="text-[#ffffff] items-center flex"><span style={{ fontFamily: 'League Spartan' }}>Esci</span></div>

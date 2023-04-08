@@ -40,7 +40,8 @@ export const Question = () => {
     "questions": 0,
     "role_id": 0,
     "role": {},
-    "user_id": 0
+    "user_id": 0,
+    "image": ""
   })
 
   const [profileModalStatus, setProfileModalStatus] = useState(false)
@@ -53,16 +54,16 @@ export const Question = () => {
   const navigate = useNavigate()
 
   const getMessages = async () => {
-    await axios.get(BASE_URL + "/message/get/" + questionId + "/question?jwt=" + window.localStorage.getItem("token"))
+    await axios.get(BASE_URL + "/message/get/" + questionId + "/question", { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
       .then(response => {
         setMessages(response.data)
         setTimeout(() => { setIsLoading(false) }, 1000);
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   const getQuestion = async () => {
-    await axios.get(BASE_URL + "/question/get/" + questionId + "?jwt=" + window.localStorage.getItem("token"))
+    await axios.get(BASE_URL + "/question/get/" + questionId, { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
       .then(response => {
         setQuestion(response.data)
         getMessages()
@@ -78,15 +79,15 @@ export const Question = () => {
       .then(response => {
         getMessages()
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   const getRoles = async () => {
-    await axios.post(BASE_URL + "/role/get")
+    await axios.get(BASE_URL + "/role/get")
       .then(response => {
         setRoles(response.data)
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   const removeLike = async (messageId) => {
@@ -94,7 +95,7 @@ export const Question = () => {
       .then(response => {
         getMessages()
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   useEffect(() => {
@@ -111,7 +112,7 @@ export const Question = () => {
     if (token == null) {
       navigate("/signin")
     } else {
-      axios.get(BASE_URL + '/user/session_check?jwt=' + window.localStorage.getItem("token"))
+      axios.get(BASE_URL + '/user/session_check', { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
         .then(response => {
           return
         })
@@ -130,15 +131,15 @@ export const Question = () => {
       .then(response => {
         getMessages()
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   const removeMessage = async (messageId) => {
-    await axios.delete(BASE_URL + '/message/remove/' + messageId + "?jwt=" + window.localStorage.getItem("token"))
+    await axios.delete(BASE_URL + '/message/remove/' + messageId, { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
       .then(response => {
         getMessages()
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   
@@ -151,7 +152,7 @@ export const Question = () => {
       setInEditing({"message_id": -1, "message_value": ""})
       getMessages()
     })
-    .catch(error => console.log(error))
+    .catch(error => {})
   }
 
   const setBanned = (userId, banned) => {
@@ -162,7 +163,7 @@ export const Question = () => {
       .then(response => {
         setProfileModalStatus(false)
       })
-      .catch(error => console.log(error))
+      .catch(error => {})
   }
 
   return (
@@ -178,12 +179,7 @@ export const Question = () => {
             <div>
               <div className='justify-around flex'>
                 <div style={{ width: 94 }}>
-                  <Avatar
-                    size={40}
-                    name={profile.minecraft_username}
-                    variant="beam"
-                    colors={[COLORS[1], COLORS[2], COLORS[0], COLORS[3], COLORS[4]]}
-                  />
+                  <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + profile.image.substring(2,profile.image.length - 1)}/>
                 </div>
               </div>
               <div className=' mt-4 text-xl items-center justify-around flex' style={{ borderRadius: 5, backgroundColor: profile.role.color }}><h2 style={{ fontSize: 14, fontWeight: 600, fontFamily: 'League Spartan' }} className='text-[#ffffff]'>{profile.role.role_label}</h2></div>
@@ -245,12 +241,7 @@ export const Question = () => {
                     <div style={{ cursor: 'pointer' }} onClick={(e) => { setProfile(messages[0].owner); setProfileModalStatus(true) }}>
                       <div className='justify-around flex'>
                         <div style={{ width: 114 }}>
-                          <Avatar
-                            size={40}
-                            name={messages[0]?.owner.minecraft_username}
-                            variant="beam"
-                            colors={[COLORS[1], COLORS[2], COLORS[0], COLORS[3], COLORS[4]]}
-                          />
+                          <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + messages[0].owner.image.substring(2,messages[0].owner.image.length - 1)}/>
                         </div>
                       </div>
                       <div className='justify-around items-center flex'><h2 style={{ fontFamily: 'League Spartan' }} className='mt-4 text-xl text-[#ffffff]'>{messages[0]?.owner.minecraft_username}</h2></div>
@@ -266,17 +257,12 @@ export const Question = () => {
                   {
                     messages.map((message, iteration) => (
                       iteration > 0 &&
-                      <div style={{ borderRadius: 8 }} className='justify-between bodyhome mt-4 flex p-10 bg-[#2a313b]'>
+                      <div key={message.message_id} style={{ borderRadius: 8 }} className='justify-between bodyhome mt-4 flex p-10 bg-[#2a313b]'>
                         <div className='flex-block'>
                           <div style={{ cursor: 'pointer' }} onClick={(e) => { setProfile(message.owner); setProfileModalStatus(true) }}>
                             <div className='justify-around flex'>
                               <div style={{ width: 114 }}>
-                                <Avatar
-                                  size={40}
-                                  name={message.owner.minecraft_username}
-                                  variant="beam"
-                                  colors={[COLORS[1], COLORS[2], COLORS[0], COLORS[3], COLORS[4]]}
-                                />
+                                <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + message.owner.image.substring(2,message.owner.image.length - 1)}/>
                               </div>
                             </div>
                             <div className='justify-around items-center flex'><h2 style={{ fontFamily: 'League Spartan' }} className='mt-4 text-xl text-[#ffffff]'>{message.owner.minecraft_username}</h2></div>
@@ -332,10 +318,17 @@ export const Question = () => {
                                 </div>
                               }
                               {
-                                message.editable &&
-                                <div className='justify-around flex mt-1'>
-                                  <div style={{ fontSize: 24, cursor: 'pointer' }} onClick={(e) => setInEditing({ "message_id": message.message_id, "message_value": message.body })} className='text-[#ebc083]'><IonIcon name='create' /></div>
-                                </div>
+                                message.editable ? (
+                                  !question.closed ? ( 
+                                    <div className='justify-around flex mt-1'>
+                                      <div style={{ fontSize: 24, cursor: 'pointer' }} onClick={(e) => setInEditing({ "message_id": message.message_id, "message_value": message.body })} className='text-[#ebc083]'><IonIcon name='create' /></div>
+                                    </div>
+                                  ):(
+                                    <></>
+                                  )
+                                ):(
+                                  <></>
+                                )
                               }
                             </div>
                           </div>
@@ -361,10 +354,17 @@ export const Question = () => {
                               </div>
                             }
                             {
-                              message.editable &&
-                              <div className='justify-around flex p-2'>
-                                <div style={{ fontSize: 24, cursor: 'pointer' }} onClick={(e) => setInEditing({ "message_id": message.message_id, "message_value": message.body })} className='text-[#ebc083]'><IonIcon name='create' /></div>
-                              </div>
+                              message.editable ? (
+                                !question.closed ? (
+                                  <div className='justify-around flex p-2'>
+                                    <div style={{ fontSize: 24, cursor: 'pointer' }} onClick={(e) => setInEditing({ "message_id": message.message_id, "message_value": message.body })} className='text-[#ebc083]'><IonIcon name='create' /></div>
+                                  </div>
+                                ):(
+                                  <></>
+                                )
+                              ):(
+                                <></>
+                              )
                             }
                             </div>
                           </div>
