@@ -51,12 +51,14 @@ export const Header = () => {
     if(token == null){
       setIsLoggedIn(false)
     }else{
-      axios.get(BASE_URL + '/user/session_check', { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")} })
+      axios.get(BASE_URL + '/user/sync', { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")} })
       .then(response => {
         setIsLoggedIn(true)
       })
       .catch(error => {
-        setIsLoggedIn(false)
+        window.localStorage.setItem("token", error.response.data.error.token)
+        window.localStorage.setItem("profile_image", error.response.data.error.image)
+        setIsLoggedIn(true)
       })
     }
   }
@@ -75,7 +77,7 @@ export const Header = () => {
       "email": profileToEdit.email
     })
     .then((response) => {
-      window.localStorage.setItem("token", response.data.param)
+      window.localStorage.setItem("token", response.data.param.token)
       setProfileModalStatus(false)
       setProfileToEditModalStatus(false)
     })

@@ -112,12 +112,13 @@ export const Question = () => {
     if (token == null) {
       navigate("/signin")
     } else {
-      axios.get(BASE_URL + '/user/session_check', { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
+      axios.get(BASE_URL + '/user/sync', { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
         .then(response => {
           return
         })
         .catch(error => {
-          navigate("/signin")
+          window.localStorage.setItem("token", error.response.data.error.token)
+          window.localStorage.setItem("profile_image", error.response.data.error.image)
         })
     }
   }
