@@ -88,6 +88,19 @@ export const Questions = () => {
     }
   }
 
+  const removeQuestion = async (questionId) => {
+    await axios.delete(BASE_URL + '/question/remove/' + questionId, { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
+    .then(response => getQuestions())
+    .catch(error => console.log(error))
+  }
+
+  
+  const removeCategory = async (categoryId) => {
+    await axios.delete(BASE_URL + '/category/remove/' + categoryId, { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
+    .then(response => navigate("/forum"))
+    .catch(error => {})
+  }
+
   return (
     <div className="justify-around flex w-screen bg-[#242a33]">
       {
@@ -139,24 +152,26 @@ export const Questions = () => {
                       <IonIcon style={{ color: COLORS[0], fontSize: 24 }} name="chatbubbles" />
                       <h2 className='ml-4 text-xl'>Discussioni</h2>
                     </div>
+                    <div className="flex">
                     {
-                      category.editable ? (
-                        <div>
+                      category.editable ? (       
                           <div className="items-center justify-around flex pl-8 pr-8" onClick={(e) => setModalStatus(true)} style={{cursor: 'pointer', color: COLORS[0], fontSize: 24 }}><IonIcon name='add-circle' /></div>
-                        </div>
                       ):(
                         jwt(window.localStorage.getItem("token")).sub.admin &&
-                          <div>
-                            <div className="items-center justify-around flex pl-8 pr-8" onClick={(e) => setModalStatus(true)} style={{cursor: 'pointer', color: COLORS[0], fontSize: 24 }}><IonIcon name='add-circle' /></div>
-                          </div>
+                          <div className="items-center justify-around flex pl-8 pr-8" onClick={(e) => setModalStatus(true)} style={{cursor: 'pointer', color: COLORS[0], fontSize: 24 }}><IonIcon name='add-circle' /></div>
                       )
                     }
+                    {
+                      jwt(window.localStorage.getItem("token")).sub.admin &&
+                        <div className="text-[#e07a65] justify-around items-center flex" style={{ fontSize: 21, cursor: 'pointer' }} onClick={(e) => removeCategory(category.category_id)}><IonIcon name='trash' /></div>
+                    }
+                    </div>
                   </div>
                   <div style={{overflowY: 'scroll', maxHeight: 750}} className='mt-4 p-10 bg-[#2a313b]'>
                     {
                       questions.map(question => (
-                        <div key={question.question_id} onClick={(e) => navigate("/question/" + question.question_id)} style={{ cursor: 'pointer', borderBottomWidth: 1, borderBottomColor: '#384554', height: 94 }} className="justify-between items-center flex">
-                          <div className="pr-4 pl-4 flex">
+                        <div key={question.question_id} style={{ borderBottomWidth: 1, borderBottomColor: '#384554', height: 94 }} className="justify-between items-center flex">
+                          <div onClick={(e) => navigate("/question/" + question.question_id)}  style={{cursor: 'pointer',}} className="pr-4 pl-4 flex">
                             <div className='items-center justify-around flex'>
                               <div style={{ width: 34 }}>
                                 <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + question.owner.image.substring(2,question.owner.image.length - 1)}/>
@@ -200,6 +215,15 @@ export const Questions = () => {
                               <h2 className="font-bold" style={{ fontFamily: 'League Spartan', color: '#596270' }}>{question.messages}</h2>
                             </div>
                           </div>
+                          {
+                            jwt(window.localStorage.getItem("token")).sub.admin || jwt(window.localStorage.getItem("token")).sub.user_id == question.owner_id ? (
+                              <div style={{width: 80}} className='justify-around flex'>
+                                <div style={{ fontSize: 21, cursor: 'pointer' }} onClick={(e) => removeQuestion(question.question_id)} className='text-[#e07a65]'><IonIcon name='trash' /></div>
+                              </div>
+                            ):(
+                              <></>
+                            )  
+                          }
                         </div>
                       ))
                     }

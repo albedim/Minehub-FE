@@ -26,17 +26,17 @@ export const Home = () => {
   const [newses, setNewses] = useState([])
 
   const [profile, setProfile] = useState({
-    "admin":"",
-    "created_on":"",
-    "email":"",
-    "likes":0,
-    "messages":0,
-    "minecraft_username":"",
-    "name":"",
-    "questions":0, 
-    "role_id":"",
+    "admin": "",
+    "created_on": "",
+    "email": "",
+    "likes": 0,
+    "messages": 0,
+    "minecraft_username": "",
+    "name": "",
+    "questions": 0,
+    "role_id": "",
     "role": {},
-    "user_id":0,
+    "user_id": 0,
     "image": ""
   })
 
@@ -64,19 +64,19 @@ export const Home = () => {
   const getStaffers = async () => {
     await axios.get(BASE_URL + '/user/get/staffers')
       .then(response => { setStaffers(response.data); getRecentUsers() })
-      .catch(error => {})
+      .catch(error => { })
   }
 
   const getRecentUsers = () => {
     axios.get(BASE_URL + '/user/get/recent')
       .then(response => { setRecentUsers(response.data); getServerStats() })
-      .catch(error => {})
+      .catch(error => { })
   }
 
   const getRoles = async () => {
     await axios.get(BASE_URL + '/role/get')
       .then(response => { setRoles(response.data) })
-      .catch(error => {})
+      .catch(error => { })
   }
 
   useEffect(() => {
@@ -86,22 +86,22 @@ export const Home = () => {
 
   useEffect(() => {
     getIsLoggedIn()
-  },[])
+  }, [])
 
   const getIsLoggedIn = () => {
     const token = window.localStorage.getItem("token")
-    if(token == null){
+    if (token == null) {
       setIsLoggedIn(false)
-    }else{
-      axios.get(BASE_URL + '/user/sync', { headers: {"Authorization" : 'Bearer ' + window.localStorage.getItem("token")}})
-      .then(response => {
-        setIsLoggedIn(true)
-      })
-      .catch(error => {
-        window.localStorage.setItem("token", error.response.data.error.token)
-        window.localStorage.setItem("profile_image", error.response.data.error.image)
-        setIsLoggedIn(true)
-      })
+    } else {
+      axios.get(BASE_URL + '/user/sync', { headers: { "Authorization": 'Bearer ' + window.localStorage.getItem("token") } })
+        .then(response => {
+          setIsLoggedIn(true)
+        })
+        .catch(error => {
+          window.localStorage.setItem("token", error.response.data.error.token)
+          window.localStorage.setItem("profile_image", error.response.data.error.image)
+          setIsLoggedIn(true)
+        })
     }
   }
 
@@ -111,7 +111,7 @@ export const Home = () => {
         setServerStats(response.data)
         getNewses()
       })
-      .catch(error => {})
+      .catch(error => { })
   }
 
   const getNewses = () => {
@@ -120,7 +120,7 @@ export const Home = () => {
         setNewses(response.data)
         setIsLoading(false)
       })
-      .catch(error => {})
+      .catch(error => { })
   }
 
   const addNews = () => {
@@ -135,7 +135,7 @@ export const Home = () => {
         setModalStatus(false)
         setIsCreatingLoading(false)
       })
-      .catch(error => {})
+      .catch(error => { })
   }
 
   const setBanned = (userId, banned) => {
@@ -146,7 +146,15 @@ export const Home = () => {
       .then(response => {
         setProfileModalStatus(false)
       })
-      .catch(error => {})
+      .catch(error => { })
+  }
+
+  const removeNews = (newsId) => {
+    axios.delete(BASE_URL + '/news/remove/' + newsId, { headers: { "Authorization": 'Bearer ' + window.localStorage.getItem("token") } })
+      .then(response => {
+        getNewses()
+      })
+      .catch(error => { })
   }
 
   return (
@@ -167,7 +175,7 @@ export const Home = () => {
                   <div>
                     <div className='justify-around flex'>
                       <div style={{ width: 94 }}>
-                        <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + profile.image.substring(2,profile.image.length - 1)}/>
+                        <img style={{ borderRadius: "50%" }} src={"data:image/png;base64," + profile.image.substring(2, profile.image.length - 1)} />
                       </div>
                     </div>
                     <div className=' mt-4 text-xl items-center justify-around flex' style={{ borderRadius: 5, backgroundColor: profile.role.color }}><h2 style={{ fontSize: 14, fontWeight: 600, fontFamily: 'League Spartan' }} className='text-[#ffffff]'>{profile.role.role_label}</h2></div>
@@ -176,56 +184,56 @@ export const Home = () => {
                         jwt(window.localStorage.getItem("token")).sub.admin ? (
                           jwt(window.localStorage.getItem("token")).sub.user_id != profile.user_id ? (
                             profile.banned ? (
-                              <div onClick={(e) => setBanned(profile.user_id, false)} className=' mt-4 text-xl items-center justify-around flex' style={{cursor: 'pointer', borderColor: 'red', borderRadius: 5, borderWidth: 1}}><h2 style={{ fontSize: 14, fontWeight: 600, fontFamily: 'League Spartan' }} className='text-[red]'>SBAN</h2></div>
-                            ):(
-                              <div onClick={(e) => setBanned(profile.user_id, true)} className=' mt-4 text-xl items-center justify-around flex' style={{cursor: 'pointer', borderRadius: 5, backgroundColor: 'red'}}><h2 style={{ fontSize: 14, fontWeight: 600, fontFamily: 'League Spartan' }} className='text-[#ffffff]'>BAN</h2></div>
+                              <div onClick={(e) => setBanned(profile.user_id, false)} className=' mt-4 text-xl items-center justify-around flex' style={{ cursor: 'pointer', borderColor: 'red', borderRadius: 5, borderWidth: 1 }}><h2 style={{ fontSize: 14, fontWeight: 600, fontFamily: 'League Spartan' }} className='text-[red]'>SBAN</h2></div>
+                            ) : (
+                              <div onClick={(e) => setBanned(profile.user_id, true)} className=' mt-4 text-xl items-center justify-around flex' style={{ cursor: 'pointer', borderRadius: 5, backgroundColor: 'red' }}><h2 style={{ fontSize: 14, fontWeight: 600, fontFamily: 'League Spartan' }} className='text-[#ffffff]'>BAN</h2></div>
                             )
-                          ):(
+                          ) : (
                             <></>
                           )
-                        ):(
+                        ) : (
                           <></>
                         )
-                      ):(
+                      ) : (
                         <></>
                       )
                     }
                   </div>
                   <div className='block-none pl-4'>
                     <div className='pt-4 pl-6'>
-                      <h2 style={{ fontSize: 18, fontFamily: 'League Spartan'}} className='font-bold text-[#ffffff]'>{profile.minecraft_username}</h2>
-                      <h2 style={{ fontSize: 16, fontFamily: 'League Spartan'}} className='text-[#596270]'>{profile.name}</h2>
+                      <h2 style={{ fontSize: 18, fontFamily: 'League Spartan' }} className='font-bold text-[#ffffff]'>{profile.minecraft_username}</h2>
+                      <h2 style={{ fontSize: 16, fontFamily: 'League Spartan' }} className='text-[#596270]'>{profile.name}</h2>
                     </div>
                     <div className='pt-1 pl-6'>
-                      <h2 style={{ fontSize: 14, fontFamily: 'League Spartan'}} className='font-bold text-[#596270]'>Membro dal {fixDate(profile.created_on)}</h2>
+                      <h2 style={{ fontSize: 14, fontFamily: 'League Spartan' }} className='font-bold text-[#596270]'>Membro dal {fixDate(profile.created_on)}</h2>
                     </div>
                     <div className='pl-6 pt-4 flex'>
                       <div className='p-2'>
-                        <h2 style={{ fontSize: 14, fontFamily: 'League Spartan'}} className='font-bold text-[#ffffff]'>Discussioni</h2>
-                        <h2 style={{textAlign: 'center', fontSize: 14, fontFamily: 'League Spartan'}} className='font-bold text-[#596270]'>{profile.questions}</h2>
+                        <h2 style={{ fontSize: 14, fontFamily: 'League Spartan' }} className='font-bold text-[#ffffff]'>Discussioni</h2>
+                        <h2 style={{ textAlign: 'center', fontSize: 14, fontFamily: 'League Spartan' }} className='font-bold text-[#596270]'>{profile.questions}</h2>
                       </div>
                       <div className='p-2'>
-                        <h2 style={{ fontSize: 14, fontFamily: 'League Spartan'}} className='font-bold text-[#ffffff]'>Messaggi</h2>
-                        <h2 style={{textAlign: 'center', fontSize: 14, fontFamily: 'League Spartan'}} className='font-bold text-[#596270]'>{profile.messages}</h2>
+                        <h2 style={{ fontSize: 14, fontFamily: 'League Spartan' }} className='font-bold text-[#ffffff]'>Messaggi</h2>
+                        <h2 style={{ textAlign: 'center', fontSize: 14, fontFamily: 'League Spartan' }} className='font-bold text-[#596270]'>{profile.messages}</h2>
                       </div>
                     </div>
                   </div>
                   <div className='none-block pl-4'>
                     <div className='pt-4 pl-6'>
-                      <h2 style={{ fontSize: 18, fontFamily: 'League Spartan'}} className='font-bold text-[#ffffff]'>{profile.minecraft_username}</h2>
-                      <h2 style={{ fontSize: 16, fontFamily: 'League Spartan'}} className='text-[#596270]'>{profile.name}</h2>
+                      <h2 style={{ fontSize: 18, fontFamily: 'League Spartan' }} className='font-bold text-[#ffffff]'>{profile.minecraft_username}</h2>
+                      <h2 style={{ fontSize: 16, fontFamily: 'League Spartan' }} className='text-[#596270]'>{profile.name}</h2>
                     </div>
                     <div className='pt-1 pl-6'>
-                      <h2 style={{ fontSize: 14, fontFamily: 'League Spartan'}} className='font-bold text-[#596270]'>Membro dal {fixDate(profile.created_on)}</h2>
+                      <h2 style={{ fontSize: 14, fontFamily: 'League Spartan' }} className='font-bold text-[#596270]'>Membro dal {fixDate(profile.created_on)}</h2>
                     </div>
                     <div className='pl-6 pt-4 flex'>
                       <div className='p-2'>
-                        <h2 style={{ fontSize: 14, fontFamily: 'League Spartan'}} className='font-bold text-[#ffffff]'>Discussioni</h2>
-                        <h2 style={{textAlign: 'center', fontSize: 14, fontFamily: 'League Spartan'}} className='font-bold text-[#596270]'>{profile.questions}</h2>
+                        <h2 style={{ fontSize: 14, fontFamily: 'League Spartan' }} className='font-bold text-[#ffffff]'>Discussioni</h2>
+                        <h2 style={{ textAlign: 'center', fontSize: 14, fontFamily: 'League Spartan' }} className='font-bold text-[#596270]'>{profile.questions}</h2>
                       </div>
                       <div className='p-2'>
-                        <h2 style={{ fontSize: 14, fontFamily: 'League Spartan'}} className='font-bold text-[#ffffff]'>Messaggi</h2>
-                        <h2 style={{textAlign: 'center', fontSize: 14, fontFamily: 'League Spartan'}} className='font-bold text-[#596270]'>{profile.messages}</h2>
+                        <h2 style={{ fontSize: 14, fontFamily: 'League Spartan' }} className='font-bold text-[#ffffff]'>Messaggi</h2>
+                        <h2 style={{ textAlign: 'center', fontSize: 14, fontFamily: 'League Spartan' }} className='font-bold text-[#596270]'>{profile.messages}</h2>
                       </div>
                     </div>
                   </div>
@@ -258,7 +266,7 @@ export const Home = () => {
                     <div className='mt-14 justify-around flex'>
                       {
                         news.name == "" || news.body == "" ? (
-                          <button style={{backgroundColor: COLORS[0], color: 'white', fontFamily: 'League Spartan', borderRadius: 5 }} className={"opacity-40 mt-4 p-3"}>Crea news</button>
+                          <button style={{ backgroundColor: COLORS[0], color: 'white', fontFamily: 'League Spartan', borderRadius: 5 }} className={"opacity-40 mt-4 p-3"}>Crea news</button>
                         ) : (
                           isCreatingLoading ? (
                             <button style={{ backgroundColor: COLORS[0], color: 'white', fontFamily: 'League Spartan', borderRadius: 5 }} className={"mt-4 p-3"}>
@@ -279,16 +287,16 @@ export const Home = () => {
                 <div style={{ maxWidth: 1040 }} className='pl-8 mt-14 pr-14'>
                   <div style={{ borderRadius: 10, fontFamily: 'League Spartan', height: 64 }} className='justify-between pl-10 pr-10 font-bold flex items-center text-[#ffffff] bg-[#2a313b]'>
                     <div className='flex'>
-                      <IonIcon style={{color: COLORS[0], fontSize: 18 }} name="newspaper" />
+                      <IonIcon style={{ color: COLORS[0], fontSize: 18 }} name="newspaper" />
                       <h2 className='ml-4 text-xl'>News</h2>
                     </div>
                     {
                       isLoggedIn ? (
                         jwt(window.localStorage.getItem("token")).sub.admin &&
-                        <div style={{height: 64}} className='items-center justify-around flex'>
-                          <div className='justify-around items-center flex' onClick={(e) => setModalStatus(true)} style={{cursor: 'pointer', color: COLORS[0], fontSize: 24 }}><IonIcon name='add-circle' /></div>
+                        <div style={{ height: 64 }} className='items-center justify-around flex'>
+                          <div className='justify-around items-center flex' onClick={(e) => setModalStatus(true)} style={{ cursor: 'pointer', color: COLORS[0], fontSize: 24 }}><IonIcon name='add-circle' /></div>
                         </div>
-                      ):(
+                      ) : (
                         <></>
                       )
                     }
@@ -303,21 +311,33 @@ export const Home = () => {
                           <h2 className='text-[#596270]'>{fixDate(iterationNews.created_on)}</h2>
                         </div>
                       </div>
-                      <div style={{ borderRadius: 8 }} className='bodyhome mt-4 flex p-10 bg-[#2a313b]'>
-                        <div style={{cursor: 'pointer'}} onClick={(e) => {setProfile(iterationNews.owner); setProfileModalStatus(true)}}>
-                          <div className='justify-around flex'>
-                            <div style={{ width: 114 }}>
-                              <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + iterationNews.owner.image.substring(2,iterationNews.owner.image.length - 1)}/>
+                      <div style={{ borderRadius: 8 }} className='justify-between bodyhome mt-4 p-10 flex bg-[#2a313b]'>
+                        <div className='flex'>
+                          <div style={{ cursor: 'pointer' }} onClick={(e) => { setProfile(iterationNews.owner); setProfileModalStatus(true) }}>
+                            <div className='justify-around flex'>
+                              <div style={{ width: 114 }}>
+                                <img style={{ borderRadius: "50%" }} src={"data:image/png;base64," + iterationNews.owner.image.substring(2, iterationNews.owner.image.length - 1)} />
+                              </div>
                             </div>
+                            <div className='justify-around items-center flex'><h2 style={{ fontFamily: 'League Spartan' }} className='mt-4 text-xl text-[#ffffff]'>{iterationNews.owner.minecraft_username}</h2></div>
+                            <div className=' mt-4 text-xl items-center justify-around flex' style={{ borderRadius: 5, backgroundColor: iterationNews.owner.role.color }}><h2 style={{ fontSize: 14, fontWeight: 600, fontFamily: 'League Spartan' }} className='text-[#ffffff]'>{iterationNews.owner.role.role_label}</h2></div>
                           </div>
-                          <div className='justify-around items-center flex'><h2 style={{ fontFamily: 'League Spartan' }} className='mt-4 text-xl text-[#ffffff]'>{iterationNews.owner.minecraft_username}</h2></div>
-                          <div className=' mt-4 text-xl items-center justify-around flex' style={{ borderRadius: 5, backgroundColor: iterationNews.owner.role.color}}><h2 style={{ fontSize: 14, fontWeight: 600, fontFamily: 'League Spartan' }} className='text-[#ffffff]'>{iterationNews.owner.role.role_label}</h2></div>
+                          <div className='p-10'>
+                            <h4 className='text-[#ffffff]' style={{ fontSize: 16, fontFamily: 'League Spartan' }}>{iterationNews.body}</h4>
+                          </div>
                         </div>
-                        <div className='p-10'>
-                          <h4 className='text-[#ffffff]' style={{ fontSize: 16, fontFamily: 'League Spartan' }}>{iterationNews.body}</h4>
-                        </div>
+                        {
+                          isLoggedIn ? (
+                            jwt(window.localStorage.getItem("token")).sub.admin &&
+                            <div className='justify-around flex mt-5'>
+                              <div style={{ fontSize: 24, cursor: 'pointer' }} onClick={() => removeNews(iterationNews.news_id)} className='text-[#e07a65]'><IonIcon name='trash' /></div>
+                            </div>
+                          ) : (
+                            <></>
+                          )
+                        }
                       </div>
-                      <div style={{width: 740}}></div>
+                      <div style={{ width: 740 }}></div>
                     </div>
                   ))
                 }
@@ -331,9 +351,9 @@ export const Home = () => {
                     <div>
                       {
                         staffers.map(staffer => (
-                          <div key={staffer.user_id} onClick={(e) => {setProfile(staffer); setProfileModalStatus(true)}} style={{cursor: 'pointer', borderTopColor: '#384554', borderTopWidth: 1, height: 74 }} className='items-center flex'>
+                          <div key={staffer.user_id} onClick={(e) => { setProfile(staffer); setProfileModalStatus(true) }} style={{ cursor: 'pointer', borderTopColor: '#384554', borderTopWidth: 1, height: 74 }} className='items-center flex'>
                             <div className='ml-4' style={{ width: 38 }}>
-                              <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + staffer.image.substring(2,staffer.image.length - 1)}/>
+                              <img style={{ borderRadius: "50%" }} src={"data:image/png;base64," + staffer.image.substring(2, staffer.image.length - 1)} />
                             </div>
                             <div className='ml-4'>
                               <h2 style={{ fontFamily: 'League Spartan' }} className='text-sm text-[#ffffff]'>@{staffer.minecraft_username}</h2>
@@ -351,19 +371,19 @@ export const Home = () => {
                     <div>
                       {
                         recentUsers.map((recentUser) => (
-                          <div key={recentUser.user_id} onClick={(e) => {setProfile(recentUser); setProfileModalStatus(true)}} style={{ cursor: 'pointer', borderTopColor: '#384554', borderTopWidth: 1, height: 74 }} className='justify-between items-center flex'>
+                          <div key={recentUser.user_id} onClick={(e) => { setProfile(recentUser); setProfileModalStatus(true) }} style={{ cursor: 'pointer', borderTopColor: '#384554', borderTopWidth: 1, height: 74 }} className='justify-between items-center flex'>
                             <div className='flex'>
                               <div className='ml-4' style={{ width: 38 }}>
-                                <img style={{borderRadius: "50%"}} src={"data:image/png;base64," + recentUser.image.substring(2,recentUser.image.length - 1)}/>
+                                <img style={{ borderRadius: "50%" }} src={"data:image/png;base64," + recentUser.image.substring(2, recentUser.image.length - 1)} />
                               </div>
                               <div className='ml-4'>
                                 <h2 style={{ fontFamily: 'League Spartan' }} className='text-sm text-[#ffffff]'>@{recentUser.minecraft_username}</h2>
                                 <h2 style={{ fontFamily: 'League Spartan' }} className='text-sm text-[#596270]'>{recentUser.name}</h2>
                               </div>
                             </div>
-                            <div className='pr-4' style={{textAlign: 'center'}}>
-                              <div><span style={{fontFamily: 'League Spartan', fontSize: 14}} className='font-bold text-[#596270]'>Messaggi</span></div>
-                              <div><span style={{fontSize: 14, fontFamily: 'League Spartan'}} className='font-bold text-[white]'>{recentUser.messages}</span></div>
+                            <div className='pr-4' style={{ textAlign: 'center' }}>
+                              <div><span style={{ fontFamily: 'League Spartan', fontSize: 14 }} className='font-bold text-[#596270]'>Messaggi</span></div>
+                              <div><span style={{ fontSize: 14, fontFamily: 'League Spartan' }} className='font-bold text-[white]'>{recentUser.messages}</span></div>
                             </div>
                           </div>
                         ))
